@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D-визуализация логических схем</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene"></canvas>
+      <main class="hud">
+        <section class="title-block">
+          <p class="kicker">Обучающий видеофрагмент</p>
+          <h1>Принцип работы электронных схем, реализующих простейшие логические функции</h1>
+        </section>
+
+        <section class="info-panel">
+          <div class="panel-head">
+            <div>
+              <p class="label">Текущая функция</p>
+              <h2 id="gate-title">NOT</h2>
+            </div>
+            <div class="output-badge" id="output-badge">Y = 1</div>
+          </div>
+
+          <p id="gate-description">
+            Инвертор изменяет значение входного сигнала на противоположное.
+          </p>
+
+          <div class="lesson-panel">
+            <div class="formula-line">
+              <span>Формула</span>
+              <strong id="formula-text">Y = NOT A</strong>
+            </div>
+            <p id="lesson-text"></p>
+            <div class="signal-steps" id="signal-steps"></div>
+            <p class="memory-note" id="memory-note"></p>
+          </div>
+
+          <div class="gate-tabs" id="gate-tabs" aria-label="Выбор логической функции"></div>
+          <div class="inputs" id="input-panel" aria-label="Переключатели входных сигналов"></div>
+
+          <table class="truth-table">
+            <thead id="truth-head"></thead>
+            <tbody id="truth-body"></tbody>
+          </table>
+
+          <div class="quiz-panel">
+            <div class="quiz-head">
+              <p class="label">Проверь себя</p>
+              <span id="quiz-status">выбери ответ</span>
+            </div>
+            <p id="quiz-question"></p>
+            <div class="quiz-actions">
+              <button type="button" data-answer="0">Y = 0</button>
+              <button type="button" data-answer="1">Y = 1</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter-panel">
+          <div class="chapter-head">
+            <p class="label">Главы мини-видео</p>
+            <span id="scene-counter">1 / 9</span>
+          </div>
+          <div class="chapter-list" id="chapter-list"></div>
+        </section>
+
+        <section class="control-panel">
+          <div class="mode-switch" id="mode-switch" aria-label="Режим работы"></div>
+          <div class="transport">
+            <button class="icon-button" id="prev-step" type="button" aria-label="Предыдущая глава"></button>
+            <button class="icon-button is-primary" id="play-toggle" type="button" aria-label="Пауза"></button>
+            <button class="icon-button" id="next-step" type="button" aria-label="Следующая глава"></button>
+            <button class="icon-button" id="restart-video" type="button" aria-label="Начать сначала"></button>
+            <button class="icon-button presentation-toggle" id="presentation-toggle" type="button" aria-label="Кино-режим"></button>
+          </div>
+          <div class="timeline">
+            <div class="timeline-track">
+              <div id="timeline-progress"></div>
+            </div>
+            <p id="step-caption">Логический 0 и 1 представлены состоянием электрического сигнала.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
