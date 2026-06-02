@@ -231,6 +231,28 @@ controls.maxPolarAngle = 1.18;
 controls.autoRotateSpeed = 0.42;
 controls.target.copy(cameraTarget);
 
+function applyResponsiveViewport() {
+  const rect = canvas!.getBoundingClientRect();
+  const width = Math.max(1, Math.round(rect.width || window.innerWidth));
+  const height = Math.max(1, Math.round(rect.height || window.innerHeight));
+  const isCompact = window.innerWidth <= 760;
+  const isShort = window.innerHeight <= 620;
+  const pixelRatio = Math.min(window.devicePixelRatio, isCompact ? 1.55 : 2);
+
+  camera.aspect = width / height;
+  camera.fov = isCompact ? 52 : 45;
+  camera.updateProjectionMatrix();
+
+  controls.minDistance = isCompact || isShort ? 10.2 : 8.8;
+  controls.maxDistance = isCompact || isShort ? 20 : 18;
+
+  renderer.setPixelRatio(pixelRatio);
+  renderer.setSize(width, height, false);
+  composer.setPixelRatio(pixelRatio);
+  composer.setSize(width, height);
+  bloomPass.setSize(width, height);
+}
+
 scene.add(new THREE.AmbientLight(0xa8c7e7, 0.42));
 
 const keyLight = new THREE.DirectionalLight(0xffffff, 2.25);
@@ -1310,17 +1332,11 @@ function animate() {
 }
 
 window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  const pixelRatio = Math.min(window.devicePixelRatio, 2);
-  renderer.setPixelRatio(pixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  composer.setPixelRatio(pixelRatio);
-  composer.setSize(window.innerWidth, window.innerHeight);
-  bloomPass.setSize(window.innerWidth, window.innerHeight);
+  applyResponsiveViewport();
 });
 
 buildBoardDetails();
+applyResponsiveViewport();
 renderControls();
 playStep(0);
 animate();
