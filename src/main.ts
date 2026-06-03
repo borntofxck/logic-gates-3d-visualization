@@ -84,21 +84,27 @@ const gates: Record<
   },
 };
 
+const gateNames: Record<GateKind, string> = {
+  NOT: "НЕ",
+  AND: "И",
+  OR: "ИЛИ",
+};
+
 const lessons: Record<GateKind, LessonInfo> = {
   NOT: {
-    formula: "Y = NOT A",
+    formula: "Y = ¬A",
     text: "Инвертор делает противоположное значение: если на входе 0, на выходе будет 1; если на входе 1, выход станет 0.",
-    memory: "Запомни: NOT всегда переворачивает сигнал.",
+    memory: "Запомни: элемент НЕ всегда переворачивает сигнал.",
   },
   AND: {
-    formula: "Y = A AND B",
-    text: "AND реализуется внутри микросхемы IC-7408: входы A и B приходят на отдельные пины, а выход Y становится единицей только при двух единицах на входах.",
-    memory: "Запомни: AND дает 1 только при A = 1 и B = 1.",
+    formula: "Y = A ∧ B",
+    text: "Элемент И реализуется внутри микросхемы 7408: входы A и B приходят на отдельные пины, а выход Y становится единицей только при двух единицах на входах.",
+    memory: "Запомни: элемент И дает 1 только при A = 1 и B = 1.",
   },
   OR: {
-    formula: "Y = A OR B",
-    text: "OR реализуется внутри микросхемы IC-7432: входы A и B подаются отдельно, а выход Y становится единицей, если активен хотя бы один вход.",
-    memory: "Запомни: OR дает 1, если хотя бы один вход равен 1.",
+    formula: "Y = A ∨ B",
+    text: "Элемент ИЛИ реализуется внутри микросхемы 7432: входы A и B подаются отдельно, а выход Y становится единицей, если активен хотя бы один вход.",
+    memory: "Запомни: элемент ИЛИ дает 1, если хотя бы один вход равен 1.",
   },
 };
 
@@ -106,57 +112,57 @@ const script: GateState[] = [
   {
     kind: "NOT",
     inputs: [0],
-    title: "Инвертор: вход 0",
-    caption: "NOT: при нуле на входе инвертор формирует единицу на выходе.",
+    title: "НЕ: вход A = 0",
+    caption: "Элемент НЕ: при нуле на входе инвертор формирует единицу на выходе.",
     duration: 5600,
   },
   {
     kind: "NOT",
     inputs: [1],
-    title: "Инвертор: вход 1",
-    caption: "NOT: активный вход переключает схему, и выходной сигнал становится нулевым.",
+    title: "НЕ: вход A = 1",
+    caption: "Элемент НЕ: активный вход переключает схему, и выходной сигнал становится нулевым.",
     duration: 5600,
   },
   {
     kind: "AND",
     inputs: [0, 0],
-    title: "AND: оба входа 0",
-    caption: "AND: на оба входных пина IC-7408 подан ноль, поэтому выход Y остается нулевым.",
+    title: "И: оба входа 0",
+    caption: "Элемент И: на оба входных пина микросхемы 7408 подан ноль, поэтому выход Y остается нулевым.",
     duration: 5000,
   },
   {
     kind: "AND",
     inputs: [1, 0],
-    title: "AND: один активный вход",
-    caption: "AND: на IC-7408 поступает A=1 и B=0, внутри микросхемы выход Y остается равным нулю.",
+    title: "И: один активный вход",
+    caption: "Элемент И: на микросхему 7408 поступает A=1 и B=0, внутри микросхемы выход Y остается равным нулю.",
     duration: 5200,
   },
   {
     kind: "AND",
     inputs: [1, 1],
-    title: "AND: два активных входа",
-    caption: "AND: оба входа IC-7408 равны единице, поэтому логический элемент формирует Y=1.",
+    title: "И: два активных входа",
+    caption: "Элемент И: оба входа микросхемы 7408 равны единице, поэтому логический элемент формирует Y=1.",
     duration: 6200,
   },
   {
     kind: "OR",
     inputs: [0, 0],
-    title: "OR: оба входа 0",
-    caption: "OR: на оба входа IC-7432 подан ноль, поэтому выход Y остается неактивным.",
+    title: "ИЛИ: оба входа 0",
+    caption: "Элемент ИЛИ: на оба входа микросхемы 7432 подан ноль, поэтому выход Y остается неактивным.",
     duration: 5000,
   },
   {
     kind: "OR",
     inputs: [0, 1],
-    title: "OR: один активный вход",
-    caption: "OR: на один вход IC-7432 подана единица, поэтому внутри микросхемы формируется Y=1.",
+    title: "ИЛИ: один активный вход",
+    caption: "Элемент ИЛИ: на один вход микросхемы 7432 подана единица, поэтому внутри микросхемы формируется Y=1.",
     duration: 5600,
   },
   {
     kind: "OR",
     inputs: [1, 1],
-    title: "OR: два активных входа",
-    caption: "OR: оба входа IC-7432 активны, выход сохраняет значение логической единицы.",
+    title: "ИЛИ: два активных входа",
+    caption: "Элемент ИЛИ: оба входа микросхемы 7432 активны, выход сохраняет значение логической единицы.",
     duration: 5600,
   },
   {
@@ -310,6 +316,7 @@ const materials = {
   }),
   boardEdge: new THREE.MeshStandardMaterial({ color: 0x06161d, roughness: 0.68, metalness: 0.26 }),
   copperOff: new THREE.MeshStandardMaterial({ color: 0x5c6671, roughness: 0.5, metalness: 0.58 }),
+  ground: new THREE.MeshStandardMaterial({ color: 0x7f94a6, roughness: 0.46, metalness: 0.72 }),
   copperOn: new THREE.MeshStandardMaterial({
     color: 0xffc952,
     roughness: 0.2,
@@ -430,15 +437,29 @@ function createCylinder(radius: number, height: number, position: [number, numbe
   return mesh;
 }
 
+function setFittedFont(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  weight: number,
+  startSize: number,
+  maxWidth: number,
+) {
+  let size = startSize;
+  do {
+    ctx.font = `${weight} ${size}px Segoe UI, Arial`;
+    size -= 2;
+  } while (ctx.measureText(text).width > maxWidth && size > 20);
+}
+
 function addLabel(text: string, x: number, z: number, color = "#f6f8fb", y = 1.62, scale = 2.25) {
   const canvasLabel = document.createElement("canvas");
   canvasLabel.width = 512;
   canvasLabel.height = 180;
   const ctx = canvasLabel.getContext("2d")!;
   ctx.clearRect(0, 0, canvasLabel.width, canvasLabel.height);
-  ctx.font = "800 76px Segoe UI, Arial";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
+  setFittedFont(ctx, text, 800, 76, canvasLabel.width * 0.88);
   ctx.fillStyle = color;
   ctx.shadowColor = "rgba(0,0,0,0.62)";
   ctx.shadowBlur = 18;
@@ -458,9 +479,9 @@ function addBoardLabel(text: string, x: number, z: number, color = "#9fb4c8", y 
   canvasLabel.height = 128;
   const ctx = canvasLabel.getContext("2d")!;
   ctx.clearRect(0, 0, canvasLabel.width, canvasLabel.height);
-  ctx.font = "800 46px Segoe UI, Arial";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
+  setFittedFont(ctx, text, 800, 46, canvasLabel.width * 0.9);
   ctx.fillStyle = color;
   ctx.fillText(text, canvasLabel.width / 2, canvasLabel.height / 2);
 
@@ -535,6 +556,22 @@ function addWire(points: [number, number, number][], active: boolean, radius = 0
   }
 
   return mesh;
+}
+
+function addGroundWire(points: [number, number, number][], radius = 0.034) {
+  const curve = new THREE.CatmullRomCurve3(points.map((point) => new THREE.Vector3(...point)));
+  const mesh = new THREE.Mesh(new THREE.TubeGeometry(curve, 34, radius, 14, false), materials.ground);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  visualRoot.add(mesh);
+  return mesh;
+}
+
+function addCircuitNode(x: number, z: number, active = false, y = 0.53) {
+  const node = createCylinder(0.105, 0.045, [x, y, z], active ? materials.copperOn : materials.ground);
+  node.rotation.x = Math.PI / 2;
+  visualRoot.add(node);
+  return node;
 }
 
 function addSignalParticles(curve: THREE.CatmullRomCurve3, count: number) {
@@ -671,17 +708,14 @@ function addLogicModule(kind: GateKind, x: number, z: number, outputActive: bool
     addPin(x - 1.42, z + 0.46, 0.72, Boolean(inputStates[1]));
   }
 
-  const ringA = new THREE.Mesh(new THREE.TorusGeometry(1.25, 0.018, 8, 80), materials.gateGlass);
-  ringA.position.set(x, 0.9, z);
-  ringA.rotation.x = Math.PI / 2;
-  const ringB = ringA.clone();
-  ringB.rotation.y = Math.PI / 2;
-  visualRoot.add(ringA, ringB);
-  gateParts.push(ringA, ringB);
-  addLabel(kind, x, z - 1.24, outputActive ? "#74e1d1" : "#f6f8fb", 1.75, 1.9);
-  const chipName: Record<GateKind, string> = { NOT: "IC-7404", AND: "IC-7408", OR: "IC-7432" };
-  addLabel(chipName[kind], x, z + 1.18, outputActive || anyInputActive ? "#ffce5c" : "#9fb4c8", 1.48, 1.15);
-  addLabel("LOGIC INSIDE", x, z, outputActive ? "#74e1d1" : "#9fb4c8", 1.18, 0.95);
+  const chipName: Record<GateKind, string> = {
+    NOT: "7404: НЕ",
+    AND: "7408: И",
+    OR: "7432: ИЛИ",
+  };
+  addLabel(gateNames[kind], x, z - 1.24, outputActive ? "#74e1d1" : "#f6f8fb", 1.75, 1.9);
+  addLabel(chipName[kind], x, z + 1.18, outputActive || anyInputActive ? "#ffce5c" : "#9fb4c8", 1.48, 1.5);
+  addLabel("ЛОГИКА ВНУТРИ", x, z, outputActive ? "#74e1d1" : "#9fb4c8", 1.18, 1.25);
 }
 
 function addPowerSource() {
@@ -699,12 +733,8 @@ function addPowerSource() {
   const plus2 = createBox([0.08, 0.08, 0.48], [-5.12, 1.08, -0.2], materials.red);
   visualRoot.add(plus, plus2);
 
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.66, 0.026, 10, 80), materials.wireGlow);
-  ring.position.set(-5.2, 0.62, 0);
-  ring.rotation.y = Math.PI / 2;
-  visualRoot.add(ring);
-  gateParts.push(ring);
-  addLabel("+5V", -5.2, -1.02, "#ffce5c", 1.35, 1.65);
+  addLabel("+5 В", -5.04, -1.02, "#ffce5c", 1.35, 1.35);
+  addLabel("0 В", -5.94, 0.92, "#b8c3cf", 1.2, 1.1);
 }
 
 function addInputSource(label: string, x: number, z: number, active: boolean) {
@@ -729,7 +759,7 @@ function addInputSource(label: string, x: number, z: number, active: boolean) {
   visualRoot.add(status);
 
   addLabel(`${label}=${active ? 1 : 0}`, x, z + 0.82, active ? "#ffce5c" : "#9fb4c8", 1.55, 1.55);
-  addLabel("INPUT PIN", x, z - 0.76, active ? "#74e1d1" : "#9fb4c8", 1.16, 0.9);
+  addLabel(`ВХОД ${label}`, x, z - 0.76, active ? "#74e1d1" : "#9fb4c8", 1.16, 1.05);
 }
 
 function addLed(output: number) {
@@ -774,6 +804,38 @@ function addLed(output: number) {
   addLabel(`Y=${output}`, 5.12, 1.05, output ? "#74e1d1" : "#9fb4c8", 1.62, 1.55);
 }
 
+function addPowerFeed(inputZs: number[], chipX: number) {
+  const junctionX = -4.32;
+  addCircuitNode(junctionX, 0, true);
+  addWire([[-4.58, 0.52, 0], [junctionX, 0.52, 0]], true, 0.04);
+
+  inputZs.forEach((z) => {
+    addCircuitNode(junctionX, z, true);
+    addWire([[junctionX, 0.52, 0], [junctionX, 0.52, z], [-3.84, 0.52, z]], true, 0.04);
+  });
+
+  addCircuitNode(chipX - 0.2, -0.82, true);
+  addWire([[junctionX, 0.52, 0], [chipX - 0.2, 0.52, -0.82]], true, 0.034);
+}
+
+function addCommonReturn(inputZs: number[], chipX: number) {
+  const busZ = 2.94;
+  const inputBusX = -3.28;
+  addCircuitNode(-5.82, 0, false, 0.5);
+  addGroundWire([[-5.82, 0.48, 0], [-5.82, 0.48, busZ], [5.34, 0.48, busZ], [5.34, 0.48, 0.32]]);
+
+  inputZs.forEach((z) => {
+    addCircuitNode(inputBusX, z + 0.34, false, 0.5);
+    addGroundWire([[inputBusX, 0.48, z + 0.34], [inputBusX, 0.48, busZ]]);
+  });
+
+  addCircuitNode(chipX + 0.2, 0.82, false, 0.5);
+  addGroundWire([[chipX + 0.2, 0.48, 0.82], [chipX + 0.2, 0.48, busZ]]);
+  addCircuitNode(5.12, 0.38, false, 0.5);
+  addGroundWire([[5.12, 0.48, 0.38], [5.34, 0.48, 0.38]]);
+  addLabel("ОБЩИЙ ПРОВОД 0 В", 0.25, 2.92, "#b8c3cf", 0.92, 1.45);
+}
+
 function buildBoardDetails() {
   const edge = createBox([13.58, 0.08, 7.43], [0, -0.18, 0], materials.boardEdge);
   staticRoot.add(edge);
@@ -793,47 +855,42 @@ function buildBoardDetails() {
     }
   }
 
-  createPCBTrace([[-5.7, 0.31, -2.9], [-3.6, 0.31, -2.9], [-2.6, 0.31, -2.1]]);
-  createPCBTrace([[1.2, 0.31, 2.95], [3.2, 0.31, 2.3], [5.6, 0.31, 2.3]]);
-  createPCBTrace([[-5.7, 0.31, 2.7], [-4.4, 0.31, 1.7], [-2.8, 0.31, 1.7]]);
-  createPCBTrace([[-6.0, 0.32, -0.7], [-4.8, 0.32, -0.7], [-4.2, 0.32, -1.35], [-2.9, 0.32, -1.35]], false, 0.018);
-  createPCBTrace([[1.2, 0.32, -2.85], [2.8, 0.32, -2.85], [3.4, 0.32, -1.85], [5.5, 0.32, -1.85]], false, 0.018);
-  createPCBTrace([[-0.9, 0.32, 2.85], [0.2, 0.32, 2.85], [0.85, 0.32, 1.85], [2.15, 0.32, 1.85]], false, 0.018);
-
   for (let i = 0; i < 9; i++) createContactPad(-5.65 + i * 0.32, -2.28);
   for (let i = 0; i < 8; i++) createContactPad(3.25 + i * 0.34, 2.18);
   for (let i = 0; i < 6; i++) createContactPad(-0.82 + i * 0.34, 3.05);
 
+  createPCBTrace([[-5.65, 0.31, -2.28], [-2.65, 0.31, -2.28]], false, 0.018);
+  createPCBTrace([[3.25, 0.31, 2.18], [5.63, 0.31, 2.18]], false, 0.018);
+  createPCBTrace([[-0.82, 0.31, 3.05], [0.88, 0.31, 3.05]], false, 0.018);
+  createPCBTrace([[-4.45, 0.32, -2.35], [-3.0, 0.32, -2.35]], false, 0.018);
+  createPCBTrace([[3.0, 0.32, 2.55], [4.85, 0.32, 2.55]], false, 0.018);
+
   for (let i = 0; i < 4; i++) createCapacitor(-4.25 + i * 0.46, -2.35, i % 2 === 0);
   for (let i = 0; i < 4; i++) createResistor(3.2 + i * 0.48, 2.55);
-  createResistor(4.9, -2.42, 0.34);
-  createResistor(-5.0, 2.42, -0.25);
-  createCapacitor(5.65, 1.35, true);
-  createCapacitor(-5.72, -1.55, false);
 
-  addBoardLabel("LOGIC TRAINER PCB", 0, -3.18, "#74e1d1", 0.42, 2.25);
-  addBoardLabel("VCC +5V", -5.22, 0.88, "#ffce5c", 0.46, 0.95);
-  addBoardLabel("SIGNAL BUS A/B", -2.15, 2.58, "#9fb4c8", 0.42, 1.25);
-  addBoardLabel("OUTPUT Y", 5.25, 1.82, "#74e1d1", 0.42, 1.05);
-  addBoardLabel("IC-7404  IC-7408  IC-7432", 1.35, 3.18, "#b8c3cf", 0.42, 1.55);
+  addBoardLabel("УЧЕБНАЯ ПЛАТА", 0, -3.18, "#74e1d1", 0.42, 2.2);
+  addBoardLabel("ПИТАНИЕ +5 В", -5.22, 0.88, "#ffce5c", 0.46, 1.18);
+  addBoardLabel("ШИНА ВХОДОВ A / B", -2.15, 2.58, "#9fb4c8", 0.42, 1.55);
+  addBoardLabel("ВЫХОД Y", 5.25, 1.82, "#74e1d1", 0.42, 1.05);
+  addBoardLabel("МИКРОСХЕМЫ: НЕ, И, ИЛИ", 1.35, 3.18, "#b8c3cf", 0.42, 1.95);
 }
 
 function buildNot(a: number) {
   currentOutput = gates.NOT.evaluate(a);
   addPowerSource();
-  addWire([[-4.68, 0.52, -1.1], [-3.76, 0.52, -1.1]], true, 0.045);
+  addPowerFeed([-1.1], 0.92);
   addInputSource("A", -3.2, -1.1, Boolean(a));
   addWire([[-2.64, 0.52, -1.1], [-1.22, 0.52, -1.1], [-0.5, 0.52, 0]], Boolean(a));
   addLogicModule("NOT", 0.92, 0, Boolean(currentOutput), [a]);
   addWire([[2.44, 0.52, 0], [3.25, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
   addLed(currentOutput);
+  addCommonReturn([-1.1], 0.92);
 }
 
 function buildAnd(a: number, b: number) {
   currentOutput = gates.AND.evaluate(a, b);
   addPowerSource();
-  addWire([[-4.68, 0.52, -1.35], [-3.84, 0.52, -1.35]], true, 0.045);
-  addWire([[-4.68, 0.52, 1.35], [-3.84, 0.52, 1.35]], true, 0.045);
+  addPowerFeed([-1.35, 1.35], 1.05);
   addInputSource("A", -3.28, -1.35, Boolean(a));
   addInputSource("B", -3.28, 1.35, Boolean(b));
   addWire([[-2.72, 0.52, -1.35], [-1.1, 0.52, -1.35], [-0.37, 0.52, -0.46]], Boolean(a));
@@ -841,13 +898,13 @@ function buildAnd(a: number, b: number) {
   addLogicModule("AND", 1.05, 0, Boolean(currentOutput), [a, b]);
   addWire([[2.57, 0.52, 0], [3.35, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
   addLed(currentOutput);
+  addCommonReturn([-1.35, 1.35], 1.05);
 }
 
 function buildOr(a: number, b: number) {
   currentOutput = gates.OR.evaluate(a, b);
   addPowerSource();
-  addWire([[-4.68, 0.52, -1.35], [-3.84, 0.52, -1.35]], true, 0.045);
-  addWire([[-4.68, 0.52, 1.35], [-3.84, 0.52, 1.35]], true, 0.045);
+  addPowerFeed([-1.35, 1.35], 1.05);
   addInputSource("A", -3.28, -1.35, Boolean(a));
   addInputSource("B", -3.28, 1.35, Boolean(b));
   addWire([[-2.72, 0.52, -1.35], [-1.1, 0.52, -1.35], [-0.37, 0.52, -0.46]], Boolean(a));
@@ -855,6 +912,7 @@ function buildOr(a: number, b: number) {
   addLogicModule("OR", 1.05, 0, Boolean(currentOutput), [a, b]);
   addWire([[2.57, 0.52, 0], [3.35, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
   addLed(currentOutput);
+  addCommonReturn([-1.35, 1.35], 1.05);
 }
 
 function getStateSteps(kind: GateKind, inputs: Inputs, output: number) {
@@ -865,8 +923,8 @@ function getStateSteps(kind: GateKind, inputs: Inputs, output: number) {
     return [
       `На вход A подан сигнал ${a}.`,
       a
-        ? "Сигнал A поступает на вход микросхемы IC-7404, а инверсия выполняется внутри логического блока."
-        : "На вход IC-7404 приходит нулевой уровень, внутри микросхемы он преобразуется в единицу на выходе.",
+        ? "Сигнал A поступает на вход микросхемы 7404, а инверсия выполняется внутри логического блока."
+        : "На вход микросхемы 7404 приходит нулевой уровень, внутри микросхемы он преобразуется в единицу на выходе.",
       `Итог: Y = ${output}. Это подсвечено в таблице истинности.`,
     ];
   }
@@ -875,18 +933,18 @@ function getStateSteps(kind: GateKind, inputs: Inputs, output: number) {
     return [
       `На входах сейчас A = ${a}, B = ${b}.`,
       a && b
-        ? "Оба входных сигнала поступают на пины IC-7408; внутри микросхемы формируется Y = 1."
-        : "Один из входных уровней равен нулю, поэтому IC-7408 оставляет выход Y в нулевом состоянии.",
-      `Итог: Y = ${output}. Для AND единица появляется только внутри логического элемента при A = 1 и B = 1.`,
+        ? "Оба входных сигнала поступают на пины микросхемы 7408; внутри микросхемы формируется Y = 1."
+        : "Один из входных уровней равен нулю, поэтому микросхема 7408 оставляет выход Y в нулевом состоянии.",
+      `Итог: Y = ${output}. Для элемента И единица появляется только внутри логического элемента при A = 1 и B = 1.`,
     ];
   }
 
   return [
     `На входах сейчас A = ${a}, B = ${b}.`,
     a || b
-      ? "Хотя бы один входной сигнал поступает на IC-7432, и уже внутри микросхемы формируется активный выход."
-      : "На оба входных пина IC-7432 приходит ноль, поэтому выход Y остается неактивным.",
-    `Итог: Y = ${output}. Для OR достаточно одной единицы на входе логического элемента.`,
+      ? "Хотя бы один входной сигнал поступает на микросхему 7432, и уже внутри микросхемы формируется активный выход."
+      : "На оба входных пина микросхемы 7432 приходит ноль, поэтому выход Y остается неактивным.",
+    `Итог: Y = ${output}. Для элемента ИЛИ достаточно одной единицы на входе логического элемента.`,
   ];
 }
 
@@ -909,7 +967,7 @@ function renderQuiz(kind: GateKind, inputs: Inputs, output: number) {
   const inputText = kind === "NOT"
     ? `A = ${inputs[0]}`
     : `A = ${inputs[0]}, B = ${inputs[1] ?? 0}`;
-  quizQuestion.textContent = `Если ${inputText}, каким будет выход ${kind}?`;
+  quizQuestion.textContent = `Если ${inputText}, каким будет выход ${gateNames[kind]}?`;
   quizQuestion.dataset.correct = String(output);
   quizStatus.textContent = "выбери ответ";
   quizStatus.className = "";
@@ -951,7 +1009,7 @@ function renderGateTabs() {
     .map(
       (kind) => `
       <button class="gate-tab ${kind === currentKind ? "is-active" : ""}" type="button" data-gate="${kind}">
-        ${kind}
+        ${gateNames[kind]}
       </button>
     `,
     )
@@ -1051,7 +1109,7 @@ function moveCamera(kind: GateKind) {
 function buildStateContent(state: GateState) {
   currentKind = state.kind;
   currentInputs = normalizeInputs(state.kind, state.inputs);
-  gateTitle.textContent = state.kind;
+  gateTitle.textContent = gateNames[state.kind];
   gateDescription.textContent = gates[state.kind].description;
   stepCaption.textContent = state.caption;
   renderInputs(state.kind, currentInputs);
