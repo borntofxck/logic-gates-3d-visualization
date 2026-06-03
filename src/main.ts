@@ -718,7 +718,7 @@ function addLogicModule(kind: GateKind, x: number, z: number, outputActive: bool
   addLabel("ЛОГИКА ВНУТРИ", x, z, outputActive ? "#74e1d1" : "#9fb4c8", 1.18, 1.25);
 }
 
-function addPowerSource() {
+function addPowerSource(showZeroReference = false) {
   const body = createCylinder(0.48, 1.02, [-5.2, 0.62, 0], materials.dark);
   body.rotation.z = Math.PI / 2;
   visualRoot.add(body);
@@ -734,7 +734,9 @@ function addPowerSource() {
   visualRoot.add(plus, plus2);
 
   addLabel("+5 В", -5.04, -1.02, "#ffce5c", 1.35, 1.35);
-  addLabel("0 В", -5.94, 0.92, "#b8c3cf", 1.2, 1.1);
+  if (showZeroReference) {
+    addLabel("0 В", -5.94, 0.92, "#b8c3cf", 1.2, 1.1);
+  }
 }
 
 function addInputSource(label: string, x: number, z: number, active: boolean) {
@@ -877,7 +879,7 @@ function buildBoardDetails() {
 
 function buildNot(a: number) {
   currentOutput = gates.NOT.evaluate(a);
-  addPowerSource();
+  addPowerSource(true);
   addPowerFeed([-1.1], 0.92);
   addInputSource("A", -3.2, -1.1, Boolean(a));
   addWire([[-2.64, 0.52, -1.1], [-1.22, 0.52, -1.1], [-0.5, 0.52, 0]], Boolean(a));
@@ -898,7 +900,6 @@ function buildAnd(a: number, b: number) {
   addLogicModule("AND", 1.05, 0, Boolean(currentOutput), [a, b]);
   addWire([[2.57, 0.52, 0], [3.35, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
   addLed(currentOutput);
-  addCommonReturn([-1.35, 1.35], 1.05);
 }
 
 function buildOr(a: number, b: number) {
@@ -912,7 +913,6 @@ function buildOr(a: number, b: number) {
   addLogicModule("OR", 1.05, 0, Boolean(currentOutput), [a, b]);
   addWire([[2.57, 0.52, 0], [3.35, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
   addLed(currentOutput);
-  addCommonReturn([-1.35, 1.35], 1.05);
 }
 
 function getStateSteps(kind: GateKind, inputs: Inputs, output: number) {
