@@ -90,6 +90,16 @@ h1 {
   text-shadow: 0 3px 28px rgb(0 0 0 / 74%);
 }
 
+.video-purpose {
+  max-width: 580px;
+  margin: 14px 0 0;
+  color: #cfe4ef;
+  font-size: clamp(13px, 1.24vw, 16px);
+  font-weight: 700;
+  line-height: 1.42;
+  text-shadow: 0 2px 18px rgb(0 0 0 / 68%);
+}
+
 .info-panel,
 .chapter-panel,
 .control-panel {
@@ -569,7 +579,7 @@ h2 {
 }
 
 body.presentation-mode .title-block {
-  opacity: 0.18;
+  opacity: 0.24;
   transform: translateY(-10px);
 }
 
@@ -666,6 +676,12 @@ body.presentation-mode .info-panel {
     order: 1;
     max-width: none;
     padding: 2px 2px 0;
+  }
+
+  .video-purpose {
+    max-width: 100%;
+    margin-top: 10px;
+    font-size: 13px;
   }
 
   .control-panel {

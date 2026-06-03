@@ -339,6 +339,16 @@ const materials = {
     transparent: true,
     opacity: 0.24,
   }),
+  chipCover: new THREE.MeshPhysicalMaterial({
+    color: 0x193041,
+    roughness: 0.18,
+    metalness: 0.12,
+    transmission: 0.52,
+    transparent: true,
+    opacity: 0.28,
+    clearcoat: 0.65,
+    clearcoatRoughness: 0.16,
+  }),
   red: new THREE.MeshStandardMaterial({ color: 0xff6b7a, roughness: 0.35, metalness: 0.24, emissive: 0x8a1320, emissiveIntensity: 0.7 }),
   dark: new THREE.MeshStandardMaterial({ color: 0x101923, roughness: 0.74, metalness: 0.2 }),
   chip: new THREE.MeshStandardMaterial({ color: 0x0b1118, roughness: 0.55, metalness: 0.28 }),
@@ -600,9 +610,22 @@ function addPin(x: number, z: number, length: number, active: boolean) {
 }
 
 function addIcSocket(x: number, z: number, active: boolean) {
-  const socket = createBox([2.25, 0.28, 1.55], [x, 0.43, z], materials.chip);
-  visualRoot.add(socket);
-  gateParts.push(socket);
+  const base = createBox([2.34, 0.12, 1.62], [x, 0.35, z], materials.chip);
+  visualRoot.add(base);
+  gateParts.push(base);
+
+  const leftRail = createBox([0.1, 0.34, 1.72], [x - 1.08, 0.53, z], materials.chip);
+  const rightRail = createBox([0.1, 0.34, 1.72], [x + 1.08, 0.53, z], materials.chip);
+  visualRoot.add(leftRail, rightRail);
+  gateParts.push(leftRail, rightRail);
+
+  const die = createBox([1.08, 0.055, 0.72], [x, 0.61, z], active ? materials.gateActive : materials.gateBody);
+  visualRoot.add(die);
+  gateParts.push(die);
+
+  const cover = createBox([1.7, 0.08, 1.18], [x, 0.77, z], materials.chipCover);
+  visualRoot.add(cover);
+  gateParts.push(cover);
 
   const notch = createCylinder(0.15, 0.04, [x - 0.86, 0.6, z], materials.dark);
   notch.rotation.x = Math.PI / 2;
@@ -684,49 +707,29 @@ function addPowerSource() {
   addLabel("+5V", -5.2, -1.02, "#ffce5c", 1.35, 1.65);
 }
 
-function addSwitch(label: string, x: number, z: number, active: boolean) {
-  const mount = createBox([1.08, 0.22, 0.56], [x, 0.39, z], materials.dark);
-  visualRoot.add(mount);
-
-  const postA = createCylinder(0.085, 0.32, [x - 0.42, 0.62, z], active ? materials.copperOn : materials.pin);
-  const postB = createCylinder(0.085, 0.32, [x + 0.42, 0.62, z], active ? materials.copperOn : materials.pin);
-  visualRoot.add(postA, postB);
-
-  const closedAngle = Math.PI / 2;
-  const openAngle = Math.PI / 2 - 0.55;
-  const blade = createCylinder(0.055, 0.98, [x, active ? 0.78 : 0.88, z], active ? materials.copperOn : materials.copperOff);
-  blade.rotation.z = active ? openAngle : closedAngle;
-  gsap.to(blade.rotation, {
-    z: active ? closedAngle : openAngle,
-    duration: 0.68,
-    ease: "power2.inOut",
-    delay: 0.18,
-  });
-  gsap.fromTo(
-    blade.position,
-    { y: active ? 0.88 : 0.78 },
-    { y: active ? 0.78 : 0.88, duration: 0.68, ease: "power2.inOut", delay: 0.18 },
-  );
-  gateParts.push(blade);
-  visualRoot.add(blade);
-
-  const status = new THREE.Mesh(
-    new THREE.SphereGeometry(0.12, 18, 12),
-    active
-      ? new THREE.MeshBasicMaterial({ color: 0xffce5c })
-      : new THREE.MeshStandardMaterial({ color: 0x394754, roughness: 0.6 }),
-  );
-  status.position.set(x, 0.67, z + 0.39);
-  visualRoot.add(status);
-  addLabel(`${label}=${active ? 1 : 0}`, x, z + 0.84, active ? "#ffce5c" : "#9fb4c8", 1.58, 1.55);
-}
-
 function addInputSource(label: string, x: number, z: number, active: boolean) {
-  addSwitch(label, x, z, active);
-  const terminal = createCylinder(0.12, 0.12, [x + 0.72, 0.54, z], active ? materials.copperOn : materials.pin);
-  terminal.rotation.x = Math.PI / 2;
-  visualRoot.add(terminal);
-  addLabel("INPUT", x - 0.02, z - 0.76, active ? "#ffce5c" : "#9fb4c8", 1.2, 0.92);
+  const base = createBox([1.06, 0.12, 0.64], [x, 0.35, z], materials.chip);
+  visualRoot.add(base);
+
+  const leftTerminal = createCylinder(0.12, 0.13, [x - 0.56, 0.5, z], materials.pin);
+  const rightTerminal = createCylinder(0.12, 0.13, [x + 0.56, 0.5, z], active ? materials.copperOn : materials.pin);
+  leftTerminal.rotation.x = Math.PI / 2;
+  rightTerminal.rotation.x = Math.PI / 2;
+  visualRoot.add(leftTerminal, rightTerminal);
+
+  const bridge = createBox([0.78, 0.055, 0.13], [x, 0.52, z], active ? materials.copperOn : materials.copperOff);
+  visualRoot.add(bridge);
+  gateParts.push(bridge);
+
+  const statusMaterial = active
+    ? new THREE.MeshBasicMaterial({ color: 0xffce5c })
+    : new THREE.MeshStandardMaterial({ color: 0x394754, roughness: 0.6, metalness: 0.18 });
+  const status = new THREE.Mesh(new THREE.SphereGeometry(0.135, 20, 14), statusMaterial);
+  status.position.set(x, 0.72, z + 0.34);
+  visualRoot.add(status);
+
+  addLabel(`${label}=${active ? 1 : 0}`, x, z + 0.82, active ? "#ffce5c" : "#9fb4c8", 1.55, 1.55);
+  addLabel("INPUT PIN", x, z - 0.76, active ? "#74e1d1" : "#9fb4c8", 1.16, 0.9);
 }
 
 function addLed(output: number) {
@@ -818,39 +821,39 @@ function buildBoardDetails() {
 function buildNot(a: number) {
   currentOutput = gates.NOT.evaluate(a);
   addPowerSource();
-  addWire([[-4.68, 0.52, -1.1], [-3.88, 0.52, -1.1]], true, 0.045);
+  addWire([[-4.68, 0.52, -1.1], [-3.76, 0.52, -1.1]], true, 0.045);
   addInputSource("A", -3.2, -1.1, Boolean(a));
-  addWire([[-2.48, 0.52, -1.1], [-1.22, 0.52, -1.1], [-0.55, 0.52, 0]], Boolean(a));
+  addWire([[-2.64, 0.52, -1.1], [-1.22, 0.52, -1.1], [-0.5, 0.52, 0]], Boolean(a));
   addLogicModule("NOT", 0.92, 0, Boolean(currentOutput), [a]);
-  addWire([[2.08, 0.52, 0], [3.25, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
+  addWire([[2.44, 0.52, 0], [3.25, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
   addLed(currentOutput);
 }
 
 function buildAnd(a: number, b: number) {
   currentOutput = gates.AND.evaluate(a, b);
   addPowerSource();
-  addWire([[-4.68, 0.52, -1.35], [-3.95, 0.52, -1.35]], true, 0.045);
-  addWire([[-4.68, 0.52, 1.35], [-3.95, 0.52, 1.35]], true, 0.045);
+  addWire([[-4.68, 0.52, -1.35], [-3.84, 0.52, -1.35]], true, 0.045);
+  addWire([[-4.68, 0.52, 1.35], [-3.84, 0.52, 1.35]], true, 0.045);
   addInputSource("A", -3.28, -1.35, Boolean(a));
   addInputSource("B", -3.28, 1.35, Boolean(b));
-  addWire([[-2.56, 0.52, -1.35], [-1.1, 0.52, -1.35], [-0.42, 0.52, -0.46]], Boolean(a));
-  addWire([[-2.56, 0.52, 1.35], [-1.1, 0.52, 1.35], [-0.42, 0.52, 0.46]], Boolean(b));
+  addWire([[-2.72, 0.52, -1.35], [-1.1, 0.52, -1.35], [-0.37, 0.52, -0.46]], Boolean(a));
+  addWire([[-2.72, 0.52, 1.35], [-1.1, 0.52, 1.35], [-0.37, 0.52, 0.46]], Boolean(b));
   addLogicModule("AND", 1.05, 0, Boolean(currentOutput), [a, b]);
-  addWire([[2.22, 0.52, 0], [3.35, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
+  addWire([[2.57, 0.52, 0], [3.35, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
   addLed(currentOutput);
 }
 
 function buildOr(a: number, b: number) {
   currentOutput = gates.OR.evaluate(a, b);
   addPowerSource();
-  addWire([[-4.68, 0.52, -1.35], [-3.95, 0.52, -1.35]], true, 0.045);
-  addWire([[-4.68, 0.52, 1.35], [-3.95, 0.52, 1.35]], true, 0.045);
+  addWire([[-4.68, 0.52, -1.35], [-3.84, 0.52, -1.35]], true, 0.045);
+  addWire([[-4.68, 0.52, 1.35], [-3.84, 0.52, 1.35]], true, 0.045);
   addInputSource("A", -3.28, -1.35, Boolean(a));
   addInputSource("B", -3.28, 1.35, Boolean(b));
-  addWire([[-2.56, 0.52, -1.35], [-1.1, 0.52, -1.35], [-0.42, 0.52, -0.46]], Boolean(a));
-  addWire([[-2.56, 0.52, 1.35], [-1.1, 0.52, 1.35], [-0.42, 0.52, 0.46]], Boolean(b));
+  addWire([[-2.72, 0.52, -1.35], [-1.1, 0.52, -1.35], [-0.37, 0.52, -0.46]], Boolean(a));
+  addWire([[-2.72, 0.52, 1.35], [-1.1, 0.52, 1.35], [-0.37, 0.52, 0.46]], Boolean(b));
   addLogicModule("OR", 1.05, 0, Boolean(currentOutput), [a, b]);
-  addWire([[2.22, 0.52, 0], [3.35, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
+  addWire([[2.57, 0.52, 0], [3.35, 0.52, 0], [4.7, 0.52, 0]], Boolean(currentOutput));
   addLed(currentOutput);
 }
 
